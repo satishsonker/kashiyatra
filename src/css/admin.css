@@ -1,0 +1,32 @@
+.ad-menu-container
+{
+    position: fixed;
+    top:0;
+    margin-left: 0;
+    transition:.35s ease-in-out all
+
+}
+.ad-page-container
+{
+    padding: 10px 10px 10px 260px;
+    overflow: hidden auto;    
+    transition:margin-left .35s ease-in-out, left .35s ease-in-out, margin-right .35s ease-in-out, right .35s ease-in-out;
+}
+.ad-top-header-container
+{
+    margin-left: 260px;
+    transition:margin-left .35s ease-in-out, left .35s ease-in-out, margin-right .35s ease-in-out, right .35s ease-in-out;
+}
+.ad-top-header-container_collapse{
+    margin-left: 0px !important;
+    display: block !important;    
+    transition:margin-left .35s ease-in-out, left .35s ease-in-out, margin-right .35s ease-in-out, right .35s ease-in-out;
+} 
+.ad-page-container + .collapse{
+    margin-left: 0px;    
+    transition: margin-left .35s ease-in-out, left .35s ease-in-out, margin-right .35s ease-in-out, right .35s ease-in-out;
+}
+.ad-menu-container + .collapse{
+    margin-left: -260px;    
+    transition: margin-left .35s ease-in-out, left .35s ease-in-out, margin-right .35s ease-in-out, right .35s ease-in-out;
+}

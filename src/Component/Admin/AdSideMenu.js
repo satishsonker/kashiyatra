@@ -5,16 +5,16 @@ export default function AdSideMenu() {
         <>
             <nav id="sidebar" className="sidebar js-sidebar">
                 <div className="sidebar-content js-simplebar" data-simplebar="init">
-                    <div className="simplebar-wrapper" style="margin: 0px;">
+                    <div className="simplebar-wrapper" style={{margin: '0px'}}>
                         <div className="simplebar-height-auto-observer-wrapper">
                             <div className="simplebar-height-auto-observer"></div>
                         </div>
                         <div className="simplebar-mask">
-                            <div className="simplebar-offset" style="right: 0px; bottom: 0px;">
-                                <div className="simplebar-content-wrapper" tabindex="0" role="region" aria-label="scrollable content" style="height: 100%; overflow: hidden scroll;">
-                                    <div className="simplebar-content" style="padding: 0px;">
+                            <div className="simplebar-offset" style={{right: '0px',bottom: '0px'}}>
+                                <div className="simplebar-content-wrapper" tabIndex="0" role="region" aria-label="scrollable content" style={{height: '100%', overflow: 'hidden scroll'}}>
+                                    <div className="simplebar-content" style={{padding: '0px'}}>
                                         <a className="sidebar-brand" href="index.html">
-                                            <img src="img/icons/KashiYatraLogo2.png" style="width: 100px; height: auto;" />
+                                            <img src="assets/img/icons/KashiYatraLogo2.png" alt='KashiYatra Logo' style={{width: '100px', height: 'auto;'}}/>
                                         </a>
                                         <ul className="sidebar-nav">
                                             <li className="sidebar-header">
@@ -106,13 +106,14 @@ export default function AdSideMenu() {
                                 </div>
                             </div>
                         </div>
-                        <div className="simplebar-placeholder" style="width: auto; height: 707px;"></div>
+                        <div className="simplebar-placeholder" style={{width: 'auto',height: '707px'}}></div>
                     </div>
-                    <div className="simplebar-track simplebar-horizontal" style="visibility: hidden;">
-                        <div className="simplebar-scrollbar" style="width: 0px; display: none;"></div>
+                    <div className="simplebar-track simplebar-horizontal" style={{visibility: 'hidden'}}>
+                        <div className="simplebar-scrollbar" style={{width: '0px', display: 'none'}}></div>
                     </div>
-                    <div className="simplebar-track simplebar-vertical" style="visibility: visible;">
-                        <div className="simplebar-scrollbar" style="height: 89px; transform: translate3d(0px, 0px, 0px); display: block;"></div>
+                    <div className="simplebar-track simplebar-vertical" style={{visibility: 'visible'}}>
+                        <div className="simplebar-scrollbar" style={{height: '89px', transform: 'translate3d(0px, 0px, 0px)', display: 'block'}}>
+                        </div>
                     </div>
                 </div>
             </nav>
