@@ -1,7 +1,13 @@
 import logo from './logo.svg';
 import './App.css';
+import { Route, Routes, HashRouter as Router } from "react-router-dom";
+import AdminLayout from './Layout/AdminLayout';
+import PublicLayout from './Layout/PublicLayout';
+import AdSideMenu from './Component/Admin/AdSideMenu';
 
 function App() {
+
+
   return (
     <div className="App">
       <header className="App-header">
@@ -18,6 +24,16 @@ function App() {
           Learn React
         </a>
       </header>
+   <Router>
+   <Routes>
+        <Route element={<PublicLayout />}>
+       
+        </Route>
+        <Route element={<AdminLayout />}>
+        <Route path="/" element={<AdSideMenu />} />
+        </Route>
+      </Routes>
+   </Router>
     </div>
   );
 }
