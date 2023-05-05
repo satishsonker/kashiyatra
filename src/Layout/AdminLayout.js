@@ -1,8 +1,8 @@
 import React,{useState} from 'react'
-import AdSideMenu from '../Component/Admin/AdSideMenu'
+import AdSideMenu from '../Component/Admin/Common/AdSideMenu'
 import '../css/admin.css';
 import { Outlet } from 'react-router-dom';
-import AdTopHeader from '../Component/AdTopHeader';
+import AdTopHeader from '../Component/Admin/Common/AdTopHeader';
 export default function AdminLayout() {
   const [isHeaderCollapsed, setIsHeaderCollapsed] = useState(false);
   return (
