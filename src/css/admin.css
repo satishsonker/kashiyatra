@@ -49,6 +49,7 @@
     border-radius: 4px;
     border:3px solid gray;
     cursor: pointer;
+    height: 100px;
 }
 .file-upload-container img:hover
 {
@@ -80,4 +81,39 @@
     right: 5px;
     transform: scale(1);
     transition: 0.15s all;
+}
+
+.file-upload-container .bd-highlight .file-name
+{
+    font-size: 10px;
+    width: 66%;
+    overflow: hidden;
+}
+.file-upload-container .bd-highlight .file-size
+{
+    font-size: 10px;
+}
+.file-upload-container .bd-highlight .non-img-container
+{
+    font-size: 10px;
+}
+
+.file-upload-container .bd-highlight .non-img-container i
+{
+    font-size: 100px;
+}
+
+.grid-image
+{
+    width: 100px;
+    cursor: pointer;
+    border: 2px solid;
+    border-radius: 4px;
+    max-height: 75px; 
+    transition: .35s all;
+}
+.grid-image:hover
+{
+    transition: .35s all;
+    box-shadow: 4px 4px 6px darkseagreen;
 }

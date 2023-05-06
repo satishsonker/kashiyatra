@@ -1,73 +1,257 @@
 import React, { useState, useEffect } from 'react'
 import '../../../css/admin.css';
+import ErrorLabel from './ErrorLabel';
+import ButtonBox from './ButtonBox';
+import { common } from '../../../utils/common';
+import { Api } from '../../../apis/Api';
+import { apiUrls } from '../../../apis/ApiUrls';
+import DeleteConfirmation from './DeleteConfirmation';
+import { toast } from 'react-toastify';
+import { toastMessage } from '../../../constants/ConstantValues';
+export default function FileUpload({
+    fileType = "image",
+    fileLimit,
+    fileSize,
+    moduleName = 0,
+    imageRemark = "",
+    moduleId = 0,
+    id = "filUpload1",
+    disable=false
+}) {
 
-export default function FileUpload({ moduleId,
-    moduleName,
-    fileType,
-    showLabel = false }) {
     const [images, setImages] = useState([]);
-    const removeImage=(removeIndex)=>
-    {
-        let newModel=[];
-        images?.forEach((ele,ind)=>{
-            if(ind!==removeIndex)
-            newModel.push(ele);
+    const [selectedFileList, setSelectedFileList] = useState()
+    const [error, setError] = useState("");
+    const [isUploading, setIsUploading] = useState(false);
+    const [existingImage, setExistingImage] = useState([]);
+    const [removeImageIndex, setRemoveImageIndex] = useState(-1);
+    const [uploadProgress, setUploadProgress] = useState({
+        total: 0,
+        loaded: 0,
+        percentage: 0
+    });
+
+    const removeImage = (removeIndex) => {
+        debugger;
+        let newModel = [];
+        images?.forEach((ele, ind) => {
+            
+            if (ind !== removeIndex){
+
+                newModel.push(ele);
+                
+            }
+            else{
+                if(ele?.id!==undefined){
+                    Api.Delete(apiUrls.fileUploadController.deleteImage+ele?.id)
+                    .then(res=>{
+                        if(res.data===true)
+                            toast.success(toastMessage.deleteSuccess);
+                        else{
+                        toast.warn(toastMessage.deleteError);  
+                        newModel.push(ele);
+                        }                  
+                    })
+                    .catch(err=>{
+                        newModel.push(ele);
+                    });
+                }
+            }
         });
         setImages([...newModel]);
     }
 
     const onImageChange = (event) => {
-        debugger;
         var urls = []
         let files = event.target.files;
         if (files && files.length > 0) {
-            for (let index = 0; index < files.length; index++) {
-                urls.push({
-                    localUrl:URL.createObjectURL(files[index]),
-                    file:files[index]
-                });
-                
+            if (checkFile(files)) {
+                for (let index = 0; index < files.length; index++) {
+                    urls.push({
+                        localUrl: URL.createObjectURL(files[index]),
+                        file: files[index]
+                    });
+
+                }
+                setImages([...urls, ...mapServerImageUrl()]);
+                setSelectedFileList(event.target.files);
             }
-            if(images.length>0)
-            setImages([...urls,...images]);
-            else
-            setImages([...urls]);
         }
     }
 
-    function checkFile() {
-        var fileElement = document.getElementById("uploadFile");
-        var fileExtension = "";
-        if (fileElement.value.lastIndexOf(".") > 0) {
-            fileExtension = fileElement.value.substring(fileElement.value.lastIndexOf(".") + 1, fileElement.value.length);
+    function checkFile(files) {
+        let validator = fileValidator();
+        let FLAG = true;
+
+        for (let index = 0; index < files.length; index++) {
+            var fileExtension = "";
+            if (files[index].name?.lastIndexOf(".") > 0) {
+                fileExtension = files[index].name?.substring(files[index].name?.lastIndexOf(".") + 1, files[index].name?.length);
+            }
+            if (!validator?.ext.includes(fileExtension.toLowerCase())) {
+                setError(`${files[index].name} is invalid file! Allowed extension are ${validator.ext}`);
+                FLAG = false;
+            }
+            else if (files.length > validator.limit) {
+                setError(`maximum ${validator.limit} files are allowed at a time`);
+                FLAG = false;
+            }
+            else if (files[index].size > (validator.size * 1024 * 1024)) {
+                setError(`${files[index].name} is invalid file! Allowed file size is ${validator.size} MB`);
+                FLAG = false;
+            }
+
         }
-        if (fileExtension.toLowerCase() == "gif") {
-            return true;
+        if (FLAG) {
+            setError("");
         }
-        else {
-            alert("You must select a GIF file for upload");
-            return false;
-        }
+        return FLAG;
     }
 
+    const fileValidator = () => {
+        var e = process.env.REACT_APP_IMAGE_FILE_EXT;
+        let ALLOWED_EXT = JSON.parse(process.env.REACT_APP_IMAGE_FILE_EXT ?? "[]");
+        let ALLOWED_FILE_SIZE = parseFloat(process.env.REACT_APP_IMAGE_FILE_SIZE_MB);
+        let ALLOWED_FILE_LIMIT = parseFloat(process.env.REACT_APP_IMAGE_FILE_LIMIT);
+        if (fileType?.toLowerCase() === 'audio') {
+            ALLOWED_EXT = JSON.parse(process.env.REACT_APP_AUDIO_FILE_EXT);
+            ALLOWED_FILE_SIZE = parseFloat(process.env.REACT_APP_AUDIO_FILE_SIZE_MB);
+            ALLOWED_FILE_LIMIT = parseFloat(process.env.REACT_APP_AUDIO_FILE_LIMIT);
+        }
+        else if (fileType?.toLowerCase() === 'video') {
+            ALLOWED_EXT = JSON.parse(process.env.REACT_APP_VIDEO_FILE_EXT);
+            ALLOWED_FILE_SIZE = parseFloat(process.env.REACT_APP_VIDEO_FILE_SIZE_MB);
+            ALLOWED_FILE_LIMIT = parseFloat(process.env.REACT_APP_VIDEO_FILE_LIMIT);
+        }
+        return {
+            ext: ALLOWED_EXT,
+            size: ALLOWED_FILE_SIZE,
+            limit: ALLOWED_FILE_LIMIT
+        }
+    }
+    const onUploadProgressHandler = (e) => {
+        const { loaded, total } = e;
+        let percentage = parseInt((loaded * 100) / total);
+        if (percentage < 95) {
+            setUploadProgress({
+                ...{
+                    total: total,
+                    loaded: loaded,
+                    percentage: percentage
+                }
+            });
+        }
+    }
+    const uploadFiles = () => {
+        let url = apiUrls.fileUploadController.uploadFiles + `?ModuleId=${moduleId}&ModuleName=${moduleName}&CreateThumbnail=true&Remark=t${imageRemark}&SequenceNo=0&imageType=${fileType}`
+        setIsUploading(true);
+        let data = new FormData();
+        for (let index = 0; index < selectedFileList.length; index++) {
+            data.append('files', selectedFileList[index], selectedFileList[index].name);
+        }
+
+        Api.FileUploadPost(url, data, { onUploadProgress: onUploadProgressHandler })
+            .then(res => {
+                isUploading(false);
+                if(res?.data[0]?.id>0){
+                setImages([...mapServerImageUrl(res.data)]);
+                toast.success(toastMessage.fileUploadSuccess);
+                }
+                else
+                {
+                    toast.warn(toastMessage.fileUploadError)
+                }
+                setUploadProgress({
+                    ...{
+                        total: 0,
+                        loaded: 0,
+                        percentage: 100
+                    }
+                });
+            })
+            .catch(err => {
+                toast.error(toastMessage.fileUploadError);
+            })
+    }
+
+    useEffect(() => {
+        Api.Get(apiUrls.fileUploadController.getImageByModNameModId + `?moduleName=${moduleName}&moduleId=${moduleId}&imageType=${fileType}`)
+            .then(res => {
+                if (res.data.length > 0) {
+                    setExistingImage(res.data);
+                    setImages([...images, ...mapServerImageUrl(res.data)]);
+                }
+            });
+    }, []);
+
+    const mapServerImageUrl = (data) => {
+        data = data === undefined ? existingImage : data;
+        var model = [];
+        (data ?? []).forEach(ele => {
+            model.push({
+                localUrl: ele?.thumbPath ?? ele?.filePath,
+                filePath: ele?.filePath,
+                onServer: true,
+                id: ele?.id
+            });
+        });
+        return model;
+    }
+
+    const mapImageUrl = (url) => {
+        if (url?.indexOf('blob') > -1)
+            return url;
+        else
+            return process.env.REACT_APP_API_URL + url;
+    }
     return (
         <>
             <input
                 type="file"
                 className="form-control form-control-sm"
                 multiple={true}
+                id={id}
+                disabled={disable?"disabled":""}
                 onChange={e => onImageChange(e)}
             />
+            <ErrorLabel message={error} />
             <div className="d-flex align-items-start bd-highlight mb-3 file-upload-container">
                 {
                     images?.map((res, index) => {
                         return <div key={index} className="bd-highlight">
-                            <div className='close text-danger'><i onClick={e=>removeImage(index)} className="fa-solid fa-xmark"></i></div>
-                            <img src={res?.localUrl} />
+                            <div className='close text-danger' data-bs-toggle="modal" data-bs-target="#deleteImagePopup"><i onClick={e => setRemoveImageIndex(pre=>index)} className="fa-solid fa-xmark"></i></div>
+
+                            {fileType === 'image' && <img className='image' title={res.file?.name} alt='Selected Image' src={mapImageUrl(res?.localUrl)} />}
+                            {fileType === "audio" && <div className='non-img-container'>
+                                <i className="fa-solid fa-file-audio"></i>
+                            </div>}
+                            {fileType === "video" && <div className='non-img-container'>
+                                <i className="fa-solid fa-file-video"></i>
+                            </div>}
+                            <div className="d-flex justify-content-between">
+                                <span title={res.file?.name} className='file-name'>{res.file?.name}</span>
+                                <span className='file-size'>{common.printDecimal(res.file?.size / 1024 / 1024)} MB</span>
+                            </div>
                         </div>
                     })
                 }
+
             </div>
+            <div className='row'>
+                <div className='col-sm-9 col-md-10'>
+                    {isUploading && <div className="progress">
+                        <div className="progress-bar progress-bar-striped bg-info" style={{ width: uploadProgress.percentage + '%' }} role="progressbar" aria-valuenow={uploadProgress.percentage} aria-valuemin="0" aria-valuemax="100">{uploadProgress.percentage + '%'}</div>
+                    </div>
+                    }
+                </div>
+                <div className='col-sm-3 col-md-2'>
+                    {images.length > 0 && <div className="d-flex justify-content-end">
+                        <ButtonBox onClickHandler={uploadFiles} disabled={isUploading || disable} type="upload" className="btn-sm"></ButtonBox>
+                    </div>
+                    }
+                </div>
+            </div>
+           {!disable && <DeleteConfirmation  modelId="deleteImagePopup" deleteHandler={removeImage} dataId={removeImageIndex} message="You want to delete file! Are you sure." title="Delete Image Confirmation!"/>}
         </>
     )
 }

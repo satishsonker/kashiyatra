@@ -32,7 +32,7 @@ export default function Breadcrumb({ option }) {
           <ol className="breadcrumb mb-0 p-0">
             <li key={111} className="breadcrumb-item">
               <Link title='Home' to='/dashboard'>
-                <i className="bx bx-home-alt"></i>
+                <i className="fa-solid fa-house"></i>
               </Link>
             </li>
             {

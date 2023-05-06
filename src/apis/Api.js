@@ -45,14 +45,13 @@ export const Api = {
             throw new Error("Pass Data Object");
         }
     },
-    "FileUploadPost": (url, data) => {
+    "FileUploadPost": (url, data, options) => {
         if (data) {
-            return axios.post(apiBaseUrl + url, data, {
-                headers: {
-                    'Access-Control-Allow-Origin': "*",
-                    'Content-Type': 'multipart/form-data'
-                }
-            });
+            let header ={headers: {
+                'Access-Control-Allow-Origin': "http://localhost:3000,*",
+                'Content-Type': 'multipart/form-data',
+            }};
+            return axios.post(apiBaseUrl + url, data, {...options,...header});
         } else {
             throw new Error("Pass Data Object");
         }
@@ -87,8 +86,8 @@ axios.interceptors.response.use(
         return res;
     },
     (err) => {
-          //Hide Loader on api call completion
-          document.body.classList.remove('loading-indicator');
+        //Hide Loader on api call completion
+        document.body.classList.remove('loading-indicator');
         if (err.status === 500)
             toast.error('Something Went Wrong');
 

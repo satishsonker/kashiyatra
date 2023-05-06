@@ -1,5 +1,5 @@
 import React from 'react'
-import { common } from '../../utils/common'
+import { common } from '../../../utils/common'
 
 export default function ButtonBox({
     text,
