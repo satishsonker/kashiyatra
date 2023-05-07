@@ -7,7 +7,7 @@ export default function Label({ text, helpText, isRequired = false, className = 
   return (
     <>
       <label className={className}
-        style={{ fontSize: fontSize, fontWeight: bold ? 'bold' : '', width: width }}>{text}
+        style={{ fontSize: fontSize, fontWeight: bold ? 'bold' : '', width: width,fontWeight:'700' }}>{text}
         {isRequired && <strong className='text-danger'>*</strong>}
       </label>
       {helpText !== undefined && helpText !== "" &&

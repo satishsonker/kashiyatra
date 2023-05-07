@@ -38,7 +38,7 @@ export default function AdSideMenu() {
                                                 </a>
                                             </li>
                                             <li className="sidebar-item">
-                                                <Link to="/admin/temple/details">
+                                                <Link to="/admin/temple/details" className='sidebar-link'>
                                                     <i className="fa-solid fa-gopuram"></i>
                                                     <span className="align-middle">Temples</span>
                                                 </Link>

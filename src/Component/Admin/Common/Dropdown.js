@@ -18,6 +18,8 @@ export default React.memo(({
     multiSelect = false,
     currentIndex = -1,
     title = '',
+    addNA=false,
+    NAText="NA",
 disableTitle=true,
     disabled = false,
     displayDefaultText = true,
@@ -119,6 +121,7 @@ disableTitle=true,
                             return <option onClick={e => itemOnClick(ele)} key={ele[elementKey]} value={ele[elementKey]}>{ele[text]}</option>
                         })
                     }
+                    {addNA && <option key={-1} value="-1">{NAText}</option>}
                 </select>
             }
 

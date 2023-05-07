@@ -10,5 +10,10 @@ export const apiUrls = {
         updateTemple:`${apiPrfix}/temples/temple`,
         getTemples:`${apiPrfix}/temples/temple`,
         getTempleById:`${apiPrfix}/temples/temple/get`,
+    },
+    masterDataController:{
+        getYatras:`${apiPrfix}/masterdata/get/yatras`,
+        getPadavs:`${apiPrfix}/masterdata/get/padavs`,
+        getDivisions:`${apiPrfix}/masterdata/get/divisions`
     }
 }

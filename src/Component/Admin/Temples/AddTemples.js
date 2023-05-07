@@ -13,10 +13,11 @@ import { toast } from 'react-toastify'
 import { toastMessage } from '../../../constants/ConstantValues'
 import { validationMessage } from '../../../constants/validationMessage'
 import { fileUploadModuleName } from '../../../constants/enums';
-import { useSearchParams } from 'react-router-dom'
+import { useSearchParams, useNavigate } from 'react-router-dom'
 
 
 export default function AddTemples() {
+  let navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const editTempleId = searchParams.get("templeId");
   const templeModelTemplate = {
@@ -27,11 +28,16 @@ export default function AddTemples() {
     id: 0,
     latitude: "",
     longitude: "",
-    padavId: 2
+    padavId: 0,
+    yatraId: 0,
+    sequenceNo: ""
   };
   const [templeModel, setTempleModel] = useState(templeModelTemplate);
   const [isSaving, setIsSaving] = useState(false);
-  const [error, setError] = useState()
+  const [error, setError] = useState();
+  const [padavList, setPadavList] = useState([]);
+  const [yatraList, setYatraList] = useState([]);
+  const [templeList, setTempleList] = useState([]);
   const changeHandler = (e) => {
     var { name, type, value } = e.target;
     if (type === 'select-one') {
@@ -48,6 +54,13 @@ export default function AddTemples() {
       return;
     }
     setError({});
+    var model = templeModel;
+    if (model.yatraId === -1) {
+      model.padavId = null;
+      model.sequenceNo = null;
+    }
+
+    model.id = model.id === -1 ? 0 : model.id;
     setIsSaving(true);
     if (templeModel.id === 0) {
       Api.Put(apiUrls.templeController.AddTemple, templeModel)
@@ -87,18 +100,57 @@ export default function AddTemples() {
           setTempleModel({ ...res.data });
         });
     }
-  }, [editTempleId])
+  }, [editTempleId]);
+
+  useEffect(() => {
+    if (templeModel?.id > 0) {
+      Api.Get(apiUrls.templeController.getTempleById + `/${templeModel.id}`)
+        .then(res => {
+          var modal = templeModel;
+          modal = res.data;
+          modal.yatraId = templeModel.yatraId;
+          modal.padavId = templeModel.padavId;
+          modal.sequenceNo = templeModel.sequenceNo;
+          setTempleModel({ ...modal });
+        });
+    }
+  }, [templeModel.id]);
+
+  useEffect(() => {
+    var apiList = [];
+    apiList.push(Api.Get(apiUrls.masterDataController.getPadavs));
+    apiList.push(Api.Get(apiUrls.masterDataController.getYatras));
+    apiList.push(Api.Get(apiUrls.templeController.getTemples));
+    Api.MultiCall(apiList)
+      .then(res => {
+        setPadavList(res[0].data);
+        setYatraList(res[1].data);
+        setTempleList(res[2].data.data);
+      });
+  }, []);
+
 
   const validateTemple = () => {
-    var { enName, enDescription, latitude, longitude } = templeModel;
+    var { enName, enDescription, latitude, longitude, yatraId, padavId, sequenceNo, id } = templeModel;
     var err = {};
-    if (!enName || enName.length < 6) err.enName = validationMessage.reqTempleNameEn;
-    if (!enDescription || enDescription.length < 6) err.enDescription = validationMessage.reqTempleDescEn;
-    if (!latitude || latitude.length < 6) err.latitude = validationMessage.reqTempleLatitude;
-    if (!longitude || longitude.length < 6) err.longitude = validationMessage.reqTempleLongitude;
+    if (!yatraId || yatraId === 0) err.yatraId = validationMessage.reqYatraName;
+    if (yatraId > 0) {
+      if (!padavId || padavId === 0) err.padavId = validationMessage.reqPadavName;
+      if (!sequenceNo || sequenceNo === "") err.sequenceNo = validationMessage.reqSequenceNumber;
+    }
+    if (id === 0) {
+      err.id = validationMessage.reqTempleSelect;
+    }
+    if (id === -1 || id > 0) {
+      if (!enName || enName.length < 6) err.enName = validationMessage.reqTempleNameEn;
+      if (!enDescription || enDescription.length < 6) err.enDescription = validationMessage.reqTempleDescEn;
+      if (!latitude || latitude.length < 6) err.latitude = validationMessage.reqTempleLatitude;
+      if (!longitude || longitude.length < 6) err.longitude = validationMessage.reqTempleLongitude;
+    }
     return err;
   }
   const resetTempleHandler = () => {
+    navigate('/admin/temple/add')
     setTempleModel({ ...templeModelTemplate });
   }
   return (
@@ -107,51 +159,52 @@ export default function AddTemples() {
         <div className='card-header bg-info text-start fs-9'>Add Temple</div>
         <div className='card-body'>
           <div className='row'>
-            {/* <div className='col-sm-12 col-md-6 offset-md-3 text-start'>
+            <div className='col-sm-12 col-md-6 offset-md-3 text-start'>
               <Label text="Yatra" isRequired={true}></Label>
-              <Dropdown data={[]} name="yatraId" value={templeModel.yatraId} defaultText="Select Yatra" onChange={changeHandler} className="form-control-sm" />
+              <Dropdown data={yatraList} addNA={true} name="yatraId" value={templeModel.yatraId} defaultText="Select Yatra" onChange={changeHandler} className="form-control-sm" />
               <ErrorLabel message={error?.yatraId} />
             </div>
-            <div className='col-sm-12 col-md-6 offset-md-3 text-start'>
-              <Label text="Stage/Padav"></Label>
-              <Dropdown data={[]} name="padavId" value={templeModel.padavId} defaultText="Select Padav" onChange={changeHandler} className="form-control-sm" />
-              <ErrorLabel message={error?.padavId} />
-            </div>
-            <div className='col-sm-12 col-md-6 offset-md-3 text-start'>
-              <Label text="Sequence No"></Label>
-              <Dropdown data={[]} name="sequenceNo" value={templeModel.sequenceNo} defaultText="Select Sequence No" onChange={changeHandler} className="form-control-sm" />
-              <ErrorLabel message={error?.sequenceNo} />
-            </div>
+            {templeModel.yatraId !== -1 && <>
+              <div className='col-sm-12 col-md-6 offset-md-3 text-start'>
+                <Label text="Stage/Padav"></Label>
+                <Dropdown data={padavList} name="padavId" value={templeModel.padavId} defaultText="Select Padav" onChange={changeHandler} className="form-control-sm" />
+                <ErrorLabel message={error?.padavId} />
+              </div>
+              <div className='col-sm-12 col-md-6 offset-md-3 text-start'>
+                <Inputbox errorMessage={error?.sequenceNo} labelText="Sequence No." isRequired={false} name="sequenceNo" value={templeModel.sequenceNo} placeholder="Enter sequence no." onChangeHandler={changeHandler} className="form-control-sm" />
+              </div>
+            </>
+            }
             <div className='col-sm-12 col-md-6 offset-md-3 text-start'>
               <Label text="Temple" isRequired={true}></Label>
-              <Dropdown data={[]} name="templeId" value={templeModel.templeId} defaultText="Select Temple" onChange={changeHandler} className="form-control-sm" />
-              <ErrorLabel message={error?.templeId} />
-            </div> */}
-            <div className='col-sm-12 col-md-6 offset-md-3 text-start'>
-              <Inputbox errorMessage={error?.enName} labelText="Name (Eng.)" isRequired={true} name="enName" value={templeModel.enName} placeholder="Enter temple name" onChangeHandler={changeHandler} className="form-control-sm" />
+              <Dropdown data={templeList} name="id" text="enName" addNA={true} NAText="Add New Temple" value={templeModel.id} defaultText="Select Temple" onChange={changeHandler} className="form-control-sm" />
+              <ErrorLabel message={error?.id} />
             </div>
             <div className='col-sm-12 col-md-6 offset-md-3 text-start'>
-              <Inputbox errorMessage={error?.enName} labelText="Name (हिंदी)" isRequired={false} name="hiName" value={templeModel.hiName} placeholder="मंदिर का नाम हिंदी में दर्ज करें" onChangeHandler={changeHandler} className="form-control-sm" />
+              <Inputbox errorMessage={error?.enName} labelText="Name (Eng.)" disabled={templeModel.id > 0 && editTempleId === 0} isRequired={true} name="enName" value={templeModel.enName} placeholder="Enter temple name" onChangeHandler={changeHandler} className="form-control-sm" />
             </div>
             <div className='col-sm-12 col-md-6 offset-md-3 text-start'>
-              <Inputbox errorMessage={error?.latitude} labelText="Latitude" isRequired={true} name="latitude" value={templeModel.latitude} placeholder="Enter Latitude" onChangeHandler={changeHandler} className="form-control-sm" />
+              <Inputbox errorMessage={error?.enName} labelText="Name (हिंदी)" isRequired={false} disabled={templeModel.id > 0 && editTempleId === 0} name="hiName" value={templeModel.hiName} placeholder="मंदिर का नाम हिंदी में दर्ज करें" onChangeHandler={changeHandler} className="form-control-sm" />
             </div>
             <div className='col-sm-12 col-md-6 offset-md-3 text-start'>
-              <Inputbox errorMessage={error?.longitude} labelText="Longitude" isRequired={true} name="longitude" value={templeModel.longitude} placeholder="Enter Longitude" onChangeHandler={changeHandler} className="form-control-sm" />
+              <Inputbox errorMessage={error?.latitude} labelText="Latitude" isRequired={true} disabled={templeModel.id > 0 && editTempleId === 0} name="latitude" value={templeModel.latitude} placeholder="Enter Latitude (25.3109° N)" onChangeHandler={changeHandler} className="form-control-sm" />
+            </div>
+            <div className='col-sm-12 col-md-6 offset-md-3 text-start'>
+              <Inputbox errorMessage={error?.longitude} labelText="Longitude" isRequired={true} disabled={templeModel.id > 0 && editTempleId === 0} name="longitude" value={templeModel.longitude} placeholder="Enter Longitude (83.0107° E)" onChangeHandler={changeHandler} className="form-control-sm" />
             </div>
             <div className='col-sm-12 col-md-6 offset-md-3 text-start'>
               <Label text="Description (Eng.)" isRequired={true}></Label>
-              <textarea name="enDescription" value={templeModel.enDescription} rows={4} style={{ resize: 'none' }} placeholder="Enter Description in English" onChange={changeHandler} className=" form-control form-control-sm" />
+              <textarea name="enDescription" value={templeModel.enDescription} disabled={templeModel.id > 0 && editTempleId === 0} rows={4} style={{ resize: 'none' }} placeholder="Enter Description in English" onChange={changeHandler} className=" form-control form-control-sm" />
               <ErrorLabel message={error?.enDescription} />
             </div>
             <div className='col-sm-12 col-md-6 offset-md-3 text-start'>
               <Label text="Description (हिंदी)" isRequired={false}></Label>
-              <textarea name="hiDescription" value={templeModel.hiDescription} rows={4} style={{ resize: 'none' }} placeholder="हिंदी में विवरण दर्ज करें" onChange={changeHandler} className=" form-control form-control-sm" />
+              <textarea name="hiDescription" value={templeModel.hiDescription} disabled={templeModel.id > 0 && editTempleId === 0} rows={4} style={{ resize: 'none' }} placeholder="हिंदी में विवरण दर्ज करें" onChange={changeHandler} className=" form-control form-control-sm" />
             </div>
             <div className='col-sm-12 col-md-6 offset-md-3 text-start'>
               <div className='d-flex justify-content-end my-3'>
                 <ButtonBox onClickHandler={saveTempleHandler} disabled={isSaving} type={templeModel?.id > 0 ? "update" : "save"} text={templeModel?.id > 0 ? "Update" : "Save"} className="btn-sm mx-3"></ButtonBox>
-                <ButtonBox onClickHandler={resetTempleHandler} disabled={isSaving} type="cancel" className="btn-sm"></ButtonBox>
+                <ButtonBox onClickHandler={resetTempleHandler} disabled={isSaving} type="cancel" text="Reset Fields" className="btn-sm"></ButtonBox>
               </div>
             </div>
             <Divider></Divider>

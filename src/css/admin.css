@@ -1,3 +1,6 @@
+:root{
+    --app-font-size:12px
+}
 .ad-menu-container {
     position: fixed;
     top: 0;
@@ -47,25 +50,25 @@
 .file-upload-container img {
     width: 100%;
     border-radius: 4px;
-    border:3px solid gray;
+    border: 3px solid gray;
     cursor: pointer;
     height: 100px;
 }
-.file-upload-container img:hover
-{
-   box-shadow:  3px 3px 8px #48c4d1;
+
+.file-upload-container img:hover {
+    box-shadow: 3px 3px 8px #48c4d1;
 }
-.file-upload-container .bd-highlight
-{
+
+.file-upload-container .bd-highlight {
     width: 33%;
     padding: 8px 8px 0 0;
 }
-.file-upload-container .bd-highlight .close
-{
+
+.file-upload-container .bd-highlight .close {
     position: relative;
 }
-.file-upload-container .bd-highlight .close i
-{
+
+.file-upload-container .bd-highlight .close i {
     position: absolute;
     color: red;
     top: 5px;
@@ -73,8 +76,8 @@
     border-radius: 14px;
     transition: 0.15s all;
 }
-.file-upload-container .bd-highlight .close i:hover
-{
+
+.file-upload-container .bd-highlight .close i:hover {
     position: absolute;
     color: rgb(255, 214, 214);
     top: 5px;
@@ -83,45 +86,97 @@
     transition: 0.15s all;
 }
 
-.file-upload-container .bd-highlight .file-name
-{
+.file-upload-container .bd-highlight .file-name {
     font-size: 10px;
     width: 66%;
     overflow: hidden;
 }
-.file-upload-container .bd-highlight .file-size
-{
-    font-size: 10px;
-}
-.file-upload-container .bd-highlight .non-img-container
-{
+
+.file-upload-container .bd-highlight .file-size {
     font-size: 10px;
 }
 
-.file-upload-container .bd-highlight .non-img-container i
-{
+.file-upload-container .bd-highlight .non-img-container {
+    font-size: 10px;
+}
+
+.file-upload-container .bd-highlight .non-img-container i {
     font-size: 100px;
 }
 
-.grid-image
-{
+.grid-image {
     width: 100px;
     cursor: pointer;
     border: 2px solid;
     border-radius: 4px;
-    max-height: 75px; 
+    max-height: 75px;
     transition: .35s all;
 }
-.grid-image:hover
-{
+
+.grid-image:hover {
     transition: .35s all;
     box-shadow: 4px 4px 6px darkseagreen;
 }
-.new-badge{
+
+.new-badge {
     position: absolute;
     background: black;
     border-radius: 4px;
     font-size: 9px;
     color: white;
     padding: 4px;
+}
+
+.table-responsive {
+    white-space: nowrap;
+    max-height: 60vh;
+    overflow-y: auto;
+}
+
+.fixTableHead thead th {
+    position: sticky;
+    top: 0;
+    background: #ABDD93;
+    z-index: 1;
+}
+
+.fixTableHead tfoot th {
+    position: sticky;
+    top: 0;
+    background: #ABDD93;
+    z-index: 1;
+}
+
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+    transition: all 1s;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: rgba(136, 136, 136, 0.363);
+    transition: all 1s;
+    border-radius: 4px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+    transition: all 1s;
+    background: #555;
+}
+
+.simplebar-content-wrapper {
+    height: 100vh !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+}
+
+.sidebar-wrapper-slide {
+    left: 0px !important;
 }

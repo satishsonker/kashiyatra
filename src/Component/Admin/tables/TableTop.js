@@ -16,7 +16,7 @@ export default function TableTop({ handlePageSizeChange, searchHandler,searchPla
       const debouncedSearchFn = useCallback(debounce(searchHandler), []);
     return (
         <div className="row mb-4">
-            <div className="col-6">
+            <div className="col-6 col-xs-12 text-start">
                 {showPaging && <div className="dataTables_length" id="example_length">
                     <label style={{ fontWeight: "normal", textAlign: "left", whiteSpace: "nowrap",fontSize:'12px' }}><span>Show </span>
                         <select onChange={e => handlePageSizeChange(e)} style={{ width: "auto", display: "inline-block",fontSize:'12px' }} name="example_length" aria-controls="example" className="form-select form-select-sm">
@@ -38,7 +38,7 @@ export default function TableTop({ handlePageSizeChange, searchHandler,searchPla
                 </div>
                 }
             </div>
-            <div className="col-6">
+            <div className="col-6 col-xs-12 ">
                 <div id="example_filter" className="dataTables_filter" style={{ textAlign: "right" }}>
                     <label style={{ fontWeight: "normal", textAlign: "right", whiteSpace: "nowrap",width: width,fontSize:'12px' }}>Search:
                         <input 

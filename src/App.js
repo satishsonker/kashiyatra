@@ -21,6 +21,7 @@ function App() {
           </Route>
           <Route element={<AdminLayout />}>
             <Route path="/" element={<AdDashboard />} />
+            <Route path="/Dashboard" element={<AdDashboard />} />
             <Route path="/admin/temple/details" element={<TempleDetails />} />
             <Route path="/admin/temple/add" element={<AddTemples />} />
           </Route>
