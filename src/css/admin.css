@@ -117,3 +117,11 @@
     transition: .35s all;
     box-shadow: 4px 4px 6px darkseagreen;
 }
+.new-badge{
+    position: absolute;
+    background: black;
+    border-radius: 4px;
+    font-size: 9px;
+    color: white;
+    padding: 4px;
+}

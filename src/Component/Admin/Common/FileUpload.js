@@ -16,7 +16,7 @@ export default function FileUpload({
     imageRemark = "",
     moduleId = 0,
     id = "filUpload1",
-    disable=false
+    disable = false
 }) {
 
     const [images, setImages] = useState([]);
@@ -35,26 +35,26 @@ export default function FileUpload({
         debugger;
         let newModel = [];
         images?.forEach((ele, ind) => {
-            
-            if (ind !== removeIndex){
+
+            if (ind !== removeIndex) {
 
                 newModel.push(ele);
-                
+
             }
-            else{
-                if(ele?.id!==undefined){
-                    Api.Delete(apiUrls.fileUploadController.deleteImage+ele?.id)
-                    .then(res=>{
-                        if(res.data===true)
-                            toast.success(toastMessage.deleteSuccess);
-                        else{
-                        toast.warn(toastMessage.deleteError);  
-                        newModel.push(ele);
-                        }                  
-                    })
-                    .catch(err=>{
-                        newModel.push(ele);
-                    });
+            else {
+                if (ele?.id !== undefined) {
+                    Api.Delete(apiUrls.fileUploadController.deleteImage + ele?.id)
+                        .then(res => {
+                            if (res.data === true)
+                                toast.success(toastMessage.deleteSuccess);
+                            else {
+                                toast.warn(toastMessage.deleteError);
+                                newModel.push(ele);
+                            }
+                        })
+                        .catch(err => {
+                            newModel.push(ele);
+                        });
                 }
             }
         });
@@ -143,22 +143,23 @@ export default function FileUpload({
         }
     }
     const uploadFiles = () => {
+        if (!selectedFileList || selectedFileList?.length === 0)
+            return;
         let url = apiUrls.fileUploadController.uploadFiles + `?ModuleId=${moduleId}&ModuleName=${moduleName}&CreateThumbnail=true&Remark=t${imageRemark}&SequenceNo=0&imageType=${fileType}`
         setIsUploading(true);
         let data = new FormData();
-        for (let index = 0; index < selectedFileList.length; index++) {
+        for (let index = 0; index < selectedFileList?.length; index++) {
             data.append('files', selectedFileList[index], selectedFileList[index].name);
         }
 
         Api.FileUploadPost(url, data, { onUploadProgress: onUploadProgressHandler })
             .then(res => {
-                isUploading(false);
-                if(res?.data[0]?.id>0){
-                setImages([...mapServerImageUrl(res.data)]);
-                toast.success(toastMessage.fileUploadSuccess);
+                setIsUploading(false);
+                if (res?.data[0]?.id > 0) {
+                    setImages([...mapServerImageUrl(res.data)]);
+                    toast.success(toastMessage.fileUploadSuccess);
                 }
-                else
-                {
+                else {
                     toast.warn(toastMessage.fileUploadError)
                 }
                 setUploadProgress({
@@ -211,7 +212,7 @@ export default function FileUpload({
                 className="form-control form-control-sm"
                 multiple={true}
                 id={id}
-                disabled={disable?"disabled":""}
+                disabled={disable ? "disabled" : ""}
                 onChange={e => onImageChange(e)}
             />
             <ErrorLabel message={error} />
@@ -219,9 +220,10 @@ export default function FileUpload({
                 {
                     images?.map((res, index) => {
                         return <div key={index} className="bd-highlight">
-                            <div className='close text-danger' data-bs-toggle="modal" data-bs-target="#deleteImagePopup"><i onClick={e => setRemoveImageIndex(pre=>index)} className="fa-solid fa-xmark"></i></div>
+                            <div className='close text-danger' data-bs-toggle="modal" data-bs-target="#deleteImagePopup"><i onClick={e => setRemoveImageIndex(pre => index)} className="fa-solid fa-xmark"></i></div>
+                            {res.id === undefined && <div className='new-badge'>New</div>}
 
-                            {fileType === 'image' && <img className='image' title={res.file?.name} alt='Selected Image' src={mapImageUrl(res?.localUrl)} />}
+                            {fileType === 'image' && <img className='image' title={res?.file?.name} alt='Selected Image' src={mapImageUrl(res?.localUrl)} />}
                             {fileType === "audio" && <div className='non-img-container'>
                                 <i className="fa-solid fa-file-audio"></i>
                             </div>}
@@ -229,8 +231,8 @@ export default function FileUpload({
                                 <i className="fa-solid fa-file-video"></i>
                             </div>}
                             <div className="d-flex justify-content-between">
-                                <span title={res.file?.name} className='file-name'>{res.file?.name}</span>
-                                <span className='file-size'>{common.printDecimal(res.file?.size / 1024 / 1024)} MB</span>
+                                <span title={res?.file?.name} className='file-name'>{res?.file?.name}</span>
+                                {res.id === undefined &&   <span className='file-size'>{common.printDecimal(res?.file?.size / 1024 / 1024)} MB</span>}
                             </div>
                         </div>
                     })
@@ -251,7 +253,7 @@ export default function FileUpload({
                     }
                 </div>
             </div>
-           {!disable && <DeleteConfirmation  modelId="deleteImagePopup" deleteHandler={removeImage} dataId={removeImageIndex} message="You want to delete file! Are you sure." title="Delete Image Confirmation!"/>}
+            {!disable && <DeleteConfirmation modelId="deleteImagePopup" deleteHandler={removeImage} dataId={removeImageIndex} message="You want to delete file! Are you sure." title="Delete Image Confirmation!" />}
         </>
     )
 }

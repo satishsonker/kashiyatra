@@ -145,7 +145,7 @@ export default function AddTemples() {
               <ErrorLabel message={error?.enDescription} />
             </div>
             <div className='col-sm-12 col-md-6 offset-md-3 text-start'>
-              <Label text="Description (Eng.)" isRequired={true}></Label>
+              <Label text="Description (हिंदी)" isRequired={false}></Label>
               <textarea name="hiDescription" value={templeModel.hiDescription} rows={4} style={{ resize: 'none' }} placeholder="हिंदी में विवरण दर्ज करें" onChange={changeHandler} className=" form-control form-control-sm" />
             </div>
             <div className='col-sm-12 col-md-6 offset-md-3 text-start'>
@@ -166,7 +166,7 @@ export default function AddTemples() {
                 <FormHeader heaterText='Barcode Upload'></FormHeader>
               </div>
               <div className='col-sm-12 col-md-6 offset-md-3 text-start'>
-                <FileUpload disable={isSaving} moduleName={fileUploadModuleName.temple} moduleId={templeModel.id} fileType='image'></FileUpload>
+                <FileUpload disable={isSaving} moduleName={fileUploadModuleName.temple} moduleId={templeModel.id} fileType='barcode'></FileUpload>
               </div>
               <div className='col-sm-12 col-md-6 offset-md-3 text-start'>
                 <FormHeader heaterText='Audio Upload'></FormHeader>

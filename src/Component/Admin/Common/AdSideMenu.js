@@ -43,7 +43,7 @@ export default function AdSideMenu() {
                                                     <span className="align-middle">Temples</span>
                                                 </Link>
                                             </li>
-                                            <li className="sidebar-item">
+                                            {/* <li className="sidebar-item">
                                                 <a className="sidebar-link" href="pages-profile.html">
                                                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="feather feather-user align-middle">
                                                         <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
@@ -107,7 +107,7 @@ export default function AdSideMenu() {
                                                 <a className="sidebar-link" href="charts-chartjs.html">
                                                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="feather feather-bar-chart-2 align-middle"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg> <span className="align-middle">Charts</span>
                                                 </a>
-                                            </li>
+                                            </li> */}
                                         </ul>
                                     </div>
                                 </div>
