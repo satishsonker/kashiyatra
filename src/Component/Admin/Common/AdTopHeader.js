@@ -1,14 +1,20 @@
 import React from 'react'
+import { useNavigate } from 'react-router-dom';
 
-export default function AdTopHeader({setCollapse,collapsed}) {
-    const toggleCollapsed=(e)=>{
+export default function AdTopHeader({ setCollapse, collapsed, authData }) {
+    const nagivate = useNavigate();
+    const handleLogout = () => {
+        localStorage.setItem(process.env.REACT_APP_STORAGE_KEY, JSON.stringify({}));
+        nagivate("/admin/login", { replace: true });
+    }
+    const toggleCollapsed = (e) => {
         e.preventDefault();
         setCollapse(!collapsed);
     }
     return (
         <>
             <nav className="navbar navbar-expand navbar-light navbar-bg">
-                <a className="sidebar-toggle js-sidebar-toggle" onClick={e=>toggleCollapsed(e)}>
+                <a className="sidebar-toggle js-sidebar-toggle" onClick={e => toggleCollapsed(e)}>
                     <i className="hamburger align-self-center"></i>
                 </a>
 
@@ -17,7 +23,11 @@ export default function AdTopHeader({setCollapse,collapsed}) {
                         <li className="nav-item dropdown">
                             <a className="nav-icon dropdown-toggle" href="#" id="alertsDropdown" data-bs-toggle="dropdown">
                                 <div className="position-relative">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="feather feather-bell align-middle"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" 
+                                        viewBox="0 0 24 24" fill="none" stroke="currentColor" 
+                                        strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" 
+                                        className="feather feather-bell align-middle">
+                                            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
                                     <span className="indicator">4</span>
                                 </div>
                             </a>
@@ -152,7 +162,7 @@ export default function AdTopHeader({setCollapse,collapsed}) {
                             </a>
 
                             <a className="nav-link dropdown-toggle d-none d-sm-inline-block" href="#" data-bs-toggle="dropdown">
-                                <img src="assets/img/avatars/avatar.jpg" className="avatar img-fluid rounded me-1" alt="Charles Hall" /> <span className="text-dark">Charles Hall</span>
+                                <img src="assets/img/avatars/avatar.jpg" className="avatar img-fluid rounded me-1" alt="Charles Hall" /> <span className="text-dark">{authData?.userResponse?.firstName + " " + authData?.userResponse?.lastName}</span>
                             </a>
                             <div className="dropdown-menu dropdown-menu-end">
                                 <a className="dropdown-item" href="pages-profile.html"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="feather feather-user align-middle me-1"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg> Profile</a>
@@ -161,7 +171,7 @@ export default function AdTopHeader({setCollapse,collapsed}) {
                                 <a className="dropdown-item" href="index.html"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="feather feather-settings align-middle me-1"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg> Settings &amp; Privacy</a>
                                 <a className="dropdown-item" href="#"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="feather feather-help-circle align-middle me-1"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg> Help Center</a>
                                 <div className="dropdown-divider"></div>
-                                <a className="dropdown-item" href="#">Log out</a>
+                                <div className="dropdown-item" onClick={e => handleLogout()}>Log out</div>
                             </div>
                         </li>
                     </ul>

@@ -12,6 +12,7 @@ export default React.memo(({
     defaultText = "Select...",
     onChange,
     defaultValue = "",
+    DefaultTextValue="0",
     itemOnClick,
     className = "",
     width = "100%",
@@ -115,7 +116,7 @@ disableTitle=true,
             {
                 !searchable && !multiSelect &&
                 <select title={title} data-toggle={disableTitle?"":"tooltip"} className={'form-control ' + className} disabled={disabled ? "disabled" : ""} onChange={e => onChange(e)} name={name} value={value}>
-                    {displayDefaultText && <option key={0} value="0">{defaultText}</option>}
+                    {displayDefaultText && <option key={-1} value={DefaultTextValue}>{defaultText}</option>}
                     {
                         listData?.length > 0 && listData?.map(ele => {
                             return <option onClick={e => itemOnClick(ele)} key={ele[elementKey]} value={ele[elementKey]}>{ele[text]}</option>

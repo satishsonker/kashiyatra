@@ -43,6 +43,12 @@ export default function AdSideMenu() {
                                                     <span className="align-middle">Temples</span>
                                                 </Link>
                                             </li>
+                                            <li className="sidebar-item">
+                                                <Link to="/admin/master/data" className='sidebar-link'>
+                                                    <i className="fa-solid fa-gopuram"></i>
+                                                    <span className="align-middle">Master Data</span>
+                                                </Link>
+                                            </li>
                                             {/* <li className="sidebar-item">
                                                 <a className="sidebar-link" href="pages-profile.html">
                                                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="feather feather-user align-middle">

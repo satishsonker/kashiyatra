@@ -180,3 +180,18 @@
 .sidebar-wrapper-slide {
     left: 0px !important;
 }
+
+a {
+    cursor: pointer;
+    color: #393939;;
+    text-decoration: none;
+}
+
+.small, small {
+    font-size: 80%;
+}
+
+.form-check-input:checked {
+    background-color: #393939;
+    border-color: #393939;
+}

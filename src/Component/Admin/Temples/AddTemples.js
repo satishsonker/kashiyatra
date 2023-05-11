@@ -118,16 +118,23 @@ export default function AddTemples() {
 
   useEffect(() => {
     var apiList = [];
-    apiList.push(Api.Get(apiUrls.masterDataController.getPadavs));
+    apiList.push();
     apiList.push(Api.Get(apiUrls.masterDataController.getYatras));
     apiList.push(Api.Get(apiUrls.templeController.getTemples));
     Api.MultiCall(apiList)
       .then(res => {
-        setPadavList(res[0].data);
-        setYatraList(res[1].data);
-        setTempleList(res[2].data.data);
+        setYatraList(res[0].data);
+        setTempleList(res[1].data.data);
       });
   }, []);
+
+  useEffect(() => {
+    Api.Get(apiUrls.masterDataController.getPadavByYatraId+`/${templeModel.yatraId}`)
+    .then(res=>{
+      setPadavList(res.data);
+    })
+  }, [templeModel.yatraId])
+  
 
 
   const validateTemple = () => {
@@ -166,12 +173,12 @@ export default function AddTemples() {
             </div>
             {templeModel.yatraId !== -1 && <>
               <div className='col-sm-12 col-md-6 offset-md-3 text-start'>
-                <Label text="Stage/Padav"></Label>
-                <Dropdown data={padavList} name="padavId" value={templeModel.padavId} defaultText="Select Padav" onChange={changeHandler} className="form-control-sm" />
+                <Label text="Stage/Padav" isRequired={templeModel.yatraId>0}></Label>
+                <Dropdown data={padavList} name="padavId" text="name" value={templeModel.padavId} defaultText="Select Padav" onChange={changeHandler} className="form-control-sm" />
                 <ErrorLabel message={error?.padavId} />
               </div>
               <div className='col-sm-12 col-md-6 offset-md-3 text-start'>
-                <Inputbox errorMessage={error?.sequenceNo} labelText="Sequence No." isRequired={false} name="sequenceNo" value={templeModel.sequenceNo} placeholder="Enter sequence no." onChangeHandler={changeHandler} className="form-control-sm" />
+                <Inputbox errorMessage={error?.sequenceNo} labelText="Sequence No."  isRequired={templeModel.yatraId>0} name="sequenceNo" value={templeModel.sequenceNo} placeholder="Enter sequence no." onChangeHandler={changeHandler} className="form-control-sm" />
               </div>
             </>
             }
